@@ -87,6 +87,8 @@ func detectOS() string {
 		fmt.Println(message)
 		os.Exit(1)
 	}
+
+	return ""
 }
 
 func installAWSCLILinux() {
