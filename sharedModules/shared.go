@@ -37,3 +37,12 @@ func ListFiles(directory string, prefix string) *list.List {
 
 	return matchingFiles
 }
+
+func CheckIfAWSDirectoryExists(homeDirectory string) bool {
+	// Check if the .aws directory exists
+	if _, err := os.Stat(homeDirectory + "/.aws"); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
