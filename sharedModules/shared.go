@@ -2,6 +2,8 @@ package sharedModules
 
 import (
 	"container/list"
+	"fmt"
+	"io"
 	"os"
 	"os/user"
 	"strings"
@@ -10,7 +12,9 @@ import (
 func GetHomeDirectory() string {
 	currentUser, err := user.Current()
 	if err != nil {
-		panic(err)
+		message := fmt.Errorf("error getting home directory")
+		fmt.Println(message)
+		os.Exit(1)
 	}
 	return currentUser.HomeDir
 }
@@ -18,13 +22,17 @@ func GetHomeDirectory() string {
 func ListFiles(directory string, prefix string) *list.List {
 	dir, err := os.Open(directory)
 	if err != nil {
-		panic(err)
+		message := fmt.Errorf("error opening directory")
+		fmt.Println(message)
+		os.Exit(1)
 	}
 	defer dir.Close()
 
 	files, err := dir.Readdir(0)
 	if err != nil {
-		panic(err)
+		message := fmt.Errorf("error reading files")
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	matchingFiles := list.New()

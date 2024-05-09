@@ -39,9 +39,9 @@ func checkIfCurlIsInstalled() {
 
 	if err != nil {
 		if _, ok := err.(*exec.ExitError); !ok {
-			fmt.Println("Curl is not installed on your system, please install it and execute this program again")
-			fmt.Println("Exiting...")
-			panic("Missing curl on your system")
+			message := fmt.Errorf("curl is not installed on your system, please install it and execute this program again")
+			fmt.Println(message)
+			os.Exit(1)
 		}
 	}
 }
@@ -52,9 +52,9 @@ func checkIfUnzipIsInstalled() {
 
 	if err != nil {
 		if _, ok := err.(*exec.ExitError); !ok {
-			fmt.Println("Unzip is not installed on your system, please install it and execute this program again")
-			fmt.Println("Exiting...")
-			panic("Missing unzip on your system")
+			message := fmt.Errorf("unzip is not installed on your system, please install it and execute this program again")
+			fmt.Println(message)
+			os.Exit(1)
 		}
 	}
 }
@@ -83,7 +83,9 @@ func detectOS() string {
 		return "linux"
 	default:
 		fmt.Println("Unsupported OS detected, please install AWS CLI manually")
-		panic("Unsupported OS detected")
+		message := fmt.Errorf("unsupported OS detected, please use MacOS or Linux")
+		fmt.Println(message)
+		os.Exit(1)
 	}
 }
 
@@ -95,7 +97,9 @@ func installAWSCLILinux() {
 	downloadCmd.Stdout = os.Stdout
 	downloadCmd.Stderr = os.Stderr
 	if err := downloadCmd.Run(); err != nil {
-		panic(err)
+		message := fmt.Errorf("error downloading aws-cli: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	// Unzip AWS CLI
@@ -103,7 +107,9 @@ func installAWSCLILinux() {
 	unzipCmd.Stdout = os.Stdout
 	unzipCmd.Stderr = os.Stderr
 	if err := unzipCmd.Run(); err != nil {
-		panic(err)
+		message := fmt.Errorf("error unzip aws-cli: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	// Install AWS CLI
@@ -115,17 +121,23 @@ func installAWSCLILinux() {
 	fmt.Println("Installing AWS CLI...")
 
 	if err := installCmd.Run(); err != nil {
-		panic(err)
+		message := fmt.Errorf("error installing aws-cli: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	// Remove downloaded zip file
 	if err := os.Remove("awscliv2.zip"); err != nil {
-		panic(err)
+		message := fmt.Errorf("error deleting aws zip file: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	// Remove extracted AWS CLI folder
 	if err := os.RemoveAll("aws"); err != nil {
-		panic(err)
+		message := fmt.Errorf("error deleting aws folder: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 }
 
@@ -135,7 +147,9 @@ func installAWSCLIMac() {
 	downloadCmd.Stdout = os.Stdout
 	downloadCmd.Stderr = os.Stderr
 	if err := downloadCmd.Run(); err != nil {
-		panic(err)
+		message := fmt.Errorf("error downloading aws cli: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	// Install AWS CLI package
@@ -143,18 +157,22 @@ func installAWSCLIMac() {
 	installCmd.Stdout = os.Stdout
 	installCmd.Stderr = os.Stderr
 	if err := installCmd.Run(); err != nil {
-		panic(err)
+		message := fmt.Errorf("error installing aws cli: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 
 	// Remove downloaded package
 	if err := os.Remove("AWSCLIV2.pkg"); err != nil {
-		panic(err)
+		message := fmt.Errorf("error removing AWSCLIV2.pkg: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
 	}
 }
 
 func installAWSCLI() {
 
-	// We need to detect if this is a Linux or MacOs system to install aws cli accordingly
+	// We need to detect if this is a Linux or macOS system to install aws cli accordingly
 
 	osSystem := detectOS()
 
