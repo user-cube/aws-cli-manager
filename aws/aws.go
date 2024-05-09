@@ -2,6 +2,7 @@ package aws
 
 import (
 	"aws-cli-manager/sharedModules"
+	"bufio"
 	"container/list"
 	"fmt"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -14,6 +15,7 @@ func displayHelp() {
 	fmt.Println("Usage: aws-cli-manager profile [command]")
 	fmt.Println("Commands:")
 	fmt.Println("  list            List all available profiles")
+	fmt.Println("  select          Select a profile")
 }
 
 func Profiles() {
@@ -25,6 +27,8 @@ func Profiles() {
 	switch os.Args[2] {
 	case "list":
 		ListProfiles()
+	case "select":
+		SelectProfile()
 	default:
 		fmt.Println("Invalid command")
 		displayHelp()
@@ -33,7 +37,50 @@ func Profiles() {
 }
 
 func SelectProfile() {
-	// This function will allow the user to select an AWS CLI profile
+	homeDirectory := sharedModules.GetHomeDirectory()
+	userInput := ""
+
+	// Check if arguments are provided
+	if len(os.Args) < 4 {
+		ListProfiles()
+
+		// Create a new scanner to read user input
+		scanner := bufio.NewScanner(os.Stdin)
+
+		// Prompt the user to enter a string
+		fmt.Print("Please select a profile: ")
+
+		// Read the user input
+		scanner.Scan()
+		userInput = scanner.Text()
+	} else {
+		userInput = os.Args[3]
+	}
+
+	// Check if the profile exists
+	profileExists := sharedModules.CheckIfProfileExists(userInput)
+
+	if !profileExists {
+		fmt.Println("Profile does not exist")
+		return
+	} else {
+
+		// Copy file .aws/credentials-profile to .aws/credentials
+		err := sharedModules.CopyFile(homeDirectory+"/.aws/credentials-"+userInput, homeDirectory+"/.aws/credentials")
+		if err != nil {
+			fmt.Println("Error copying credentials file")
+			return
+		}
+
+		// Copy file .aws/config-profile to .aws/config
+		err = sharedModules.CopyFile(homeDirectory+"/.aws/config-"+userInput, homeDirectory+"/.aws/config")
+		if err != nil {
+			fmt.Println("Error copying config file")
+			return
+		}
+
+		fmt.Println("Profile selected successfully, using profile: " + userInput)
+	}
 }
 
 func ListProfiles() *list.List {
