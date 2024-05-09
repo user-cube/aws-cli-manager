@@ -80,12 +80,7 @@ func CheckIfProfileExists(profile string) bool {
 	credentialsFile := homeDirectory + "/.aws/credentials-" + profile
 	_, err := os.Stat(credentialsFile)
 
-	if os.IsNotExist(err) {
-		return false
-	}
-
-	return true
-
+	return !os.IsNotExist(err)
 }
 
 // CopyFile copies a file from source to destination.

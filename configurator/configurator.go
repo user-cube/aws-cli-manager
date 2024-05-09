@@ -52,6 +52,8 @@ func setUpCredentialsFile() (credentialsFile string, configurationFile string) {
 		os.Exit(1)
 	}
 
+	defer file.Close()
+
 	file, err = os.Create(configurationFile)
 	if err != nil {
 		message := fmt.Errorf("error creating configuration file: %v", err)
@@ -107,9 +109,20 @@ func storeCredentials(awsKeyID string, awsKeySecret string, region string, crede
 
 	// Write the AWS credentials to the file
 	_, err = file.WriteString("[default]\n")
-	_, err = file.WriteString("aws_access_key_id = " + awsKeyID + "\n")
-	_, err = file.WriteString("aws_secret_access_key = " + awsKeySecret + "\n")
+	if err != nil {
+		message := fmt.Errorf("error writing to credentials file: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
+	}
 
+	_, err = file.WriteString("aws_access_key_id = " + awsKeyID + "\n")
+	if err != nil {
+		message := fmt.Errorf("error writing to credentials file: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
+	}
+
+	_, err = file.WriteString("aws_secret_access_key = " + awsKeySecret + "\n")
 	if err != nil {
 		message := fmt.Errorf("error writing to credentials file: %v", err)
 		fmt.Println(message)
@@ -126,8 +139,20 @@ func storeCredentials(awsKeyID string, awsKeySecret string, region string, crede
 		os.Exit(1)
 	}
 
+	// Write the AWS configuration to the file
 	_, err = file.WriteString("[default]\n")
+	if err != nil {
+		message := fmt.Errorf("error writing to configuration file: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
+	}
+
 	_, err = file.WriteString("region = " + region + "\n")
+	if err != nil {
+		message := fmt.Errorf("error writing to configuration file: %v", err)
+		fmt.Println(message)
+		os.Exit(1)
+	}
 
 	// Close the file after the function ends
 	defer file.Close()
