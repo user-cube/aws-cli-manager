@@ -54,3 +54,67 @@ func CheckIfAWSDirectoryExists(homeDirectory string) bool {
 
 	return true
 }
+
+func CheckIfProfileExists(profile string) bool {
+	// Check if the profile exists
+
+	homeDirectory := GetHomeDirectory()
+
+	dirExists := CheckIfAWSDirectoryExists(homeDirectory)
+
+	awsDir := homeDirectory + "/.aws"
+
+	if !dirExists {
+		// Create the .aws directory
+		err := os.Mkdir(awsDir, 0700)
+
+		if err != nil {
+			message := fmt.Errorf("error creating .aws directory: %v", err)
+			fmt.Println(message)
+			os.Exit(1)
+		}
+
+	}
+
+	// Check if profile is in the credentials file
+	credentialsFile := homeDirectory + "/.aws/credentials-" + profile
+	_, err := os.Stat(credentialsFile)
+
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+
+}
+
+// CopyFile copies a file from source to destination.
+func CopyFile(source string, destination string) error {
+	// Open the source file
+	srcFile, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	// Create the destination file
+	destFile, err := os.Create(destination)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	// Copy the contents of the source file to the destination file
+	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	// Flushes any buffered data to the file
+	err = destFile.Sync()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
