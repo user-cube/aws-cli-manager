@@ -8,19 +8,20 @@ import (
 )
 
 func ConfigureAWSCLI() {
-	configurationFile := setUpConfigurationFile()
-	awsKeyID, awsKeySecret := askCredentials()
-	storeCredentials(awsKeyID, awsKeySecret, configurationFile)
+	credentialsFile, configurationFile := setUpCredentialsFile()
+	awsKeyID, awsKeySecret, region := askCredentials()
+	storeCredentials(awsKeyID, awsKeySecret, region, credentialsFile, configurationFile)
 }
 
-func setUpConfigurationFile() string {
+func setUpCredentialsFile() (credentialsFile string, configurationFile string) {
 
 	homeDirectory := sharedModules.GetHomeDirectory()
-	dirExists := checkIfAWSDirectoryExists(homeDirectory)
+	awsDir := homeDirectory + "/.aws"
+	dirExists := sharedModules.CheckIfAWSDirectoryExists(homeDirectory)
 
 	if !dirExists {
 		// Create the .aws directory
-		err := os.Mkdir(homeDirectory+"/.aws", 0700)
+		err := os.Mkdir(awsDir, 0700)
 
 		if err != nil {
 			panic(err)
@@ -38,11 +39,16 @@ func setUpConfigurationFile() string {
 	scanner.Scan()
 	userInput := scanner.Text()
 
-	configurationFile := homeDirectory + "/.aws/credentials-" + userInput
+	credentialsFile = homeDirectory + "/.aws/credentials-" + userInput
+	configurationFile = homeDirectory + "/.aws/config-" + userInput
 
 	// Create a new file in the home directory
-	file, err := os.Create(configurationFile)
+	file, err := os.Create(credentialsFile)
+	if err != nil {
+		panic(err)
+	}
 
+	file, err = os.Create(configurationFile)
 	if err != nil {
 		panic(err)
 	}
@@ -50,20 +56,11 @@ func setUpConfigurationFile() string {
 	// Close the file after the function ends
 	defer file.Close()
 
-	return configurationFile
+	return credentialsFile, configurationFile
 
 }
 
-func checkIfAWSDirectoryExists(homeDirectory string) bool {
-	// Check if the .aws directory exists
-	if _, err := os.Stat(homeDirectory + "/.aws"); os.IsNotExist(err) {
-		return false
-	}
-
-	return true
-}
-
-func askCredentials() (awsKeyID string, awsKeySecret string) {
+func askCredentials() (awsKeyID string, awsKeySecret string, region string) {
 	// Create a new scanner to read user input
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -81,16 +78,22 @@ func askCredentials() (awsKeyID string, awsKeySecret string) {
 	scanner.Scan()
 	awsKeySecret = scanner.Text()
 
-	return awsKeyID, awsKeySecret
+	// Prompt the user to enter a string
+	fmt.Print("Please enter your AWS Region: ")
+
+	// Read the user input
+	scanner.Scan()
+	region = scanner.Text()
+
+	return awsKeyID, awsKeySecret, region
 
 }
 
-func storeCredentials(awsKeyID string, awsKeySecret string, configurationFile string) {
+func storeCredentials(awsKeyID string, awsKeySecret string, region string, credentialsFile string, configurationFile string) {
 	// Open the file in append mode
-	file, err := os.OpenFile(configurationFile, os.O_APPEND|os.O_WRONLY, 0600)
+	file, err := os.OpenFile(credentialsFile, os.O_APPEND|os.O_WRONLY, 0600)
 
 	if err != nil {
-		fmt.Println("Error:", err)
 		panic(err)
 	}
 
@@ -100,9 +103,19 @@ func storeCredentials(awsKeyID string, awsKeySecret string, configurationFile st
 	_, err = file.WriteString("aws_secret_access_key = " + awsKeySecret + "\n")
 
 	if err != nil {
-		fmt.Println("Error:", err)
 		panic(err)
 	}
+
+	defer file.Close()
+
+	file, err = os.OpenFile(configurationFile, os.O_APPEND|os.O_WRONLY, 0600)
+
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = file.WriteString("[default]\n")
+	_, err = file.WriteString("region = " + region + "\n")
 
 	// Close the file after the function ends
 	defer file.Close()
