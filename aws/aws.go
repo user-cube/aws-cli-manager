@@ -44,6 +44,14 @@ func ListProfiles() *list.List {
 	// Get the path to the .aws directory
 	awsDirectory := homeDirectory + "/.aws"
 
+	// Check if the .aws directory exists
+	dirExists := sharedModules.CheckIfAWSDirectoryExists(homeDirectory)
+
+	if !dirExists {
+		fmt.Println("No profiles found")
+		return nil
+	}
+
 	// List all files that start with "credentials" in the .aws directory
 	files := sharedModules.ListFiles(awsDirectory, "credentials-")
 
