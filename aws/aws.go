@@ -10,37 +10,7 @@ import (
 	"strings"
 )
 
-func displayHelp() {
-	// This function will display the help menu
-	fmt.Println("Usage: aws-cli-manager profile [command]")
-	fmt.Println("Commands:")
-	fmt.Println("  list            List all available profiles")
-	fmt.Println("  select          Select a profile")
-	fmt.Println("  credentials     Export credentials to environment variables, you should execute this command with eval, e.g. eval $(aws-cli-manager profile credentials)")
-	fmt.Println("  help            Display help")
-}
-
-func Profiles() {
-	if len(os.Args) < 3 {
-		displayHelp()
-		return
-	}
-
-	switch os.Args[2] {
-	case "list":
-		ListProfiles()
-	case "select":
-		selectProfile()
-	case "credentials":
-		exportCredentialsToEnvironmentVariables()
-	default:
-		fmt.Println("Invalid command")
-		displayHelp()
-
-	}
-}
-
-func selectProfile() {
+func SelectProfile() {
 	homeDirectory := sharedModules.GetHomeDirectory()
 	userInput := ""
 
@@ -131,7 +101,7 @@ func ListProfiles() *list.List {
 	return files
 }
 
-func exportCredentialsToEnvironmentVariables() {
+func ExportCredentialsToEnvironmentVariables() {
 
 	// We need to get variables from the credentials file
 	// and export them to the environment variables
@@ -185,4 +155,31 @@ func exportCredentialsToEnvironmentVariables() {
 	fmt.Println("AWS_ACCESS_KEY_ID=\"" + credentials["aws_access_key_id"] + "\"")
 	fmt.Println("AWS_SECRET_ACCESS_KEY=\"" + credentials["aws_secret_access_key"] + "\"")
 
+}
+
+func GetProfileNames() []string {
+	// Get the home directory of the user
+	homeDirectory := sharedModules.GetHomeDirectory()
+
+	// Get the path to the .aws directory
+	awsDirectory := homeDirectory + "/.aws"
+
+	// Check if the .aws directory exists
+	dirExists := sharedModules.CheckIfAWSDirectoryExists(homeDirectory)
+
+	if !dirExists {
+		fmt.Println("No profiles found")
+		os.Exit(1)
+	}
+
+	// List all files that start with "credentials" in the .aws directory
+	files := sharedModules.ListFiles(awsDirectory, "credentials-")
+
+	var profiles []string
+	// Populate the table
+	for e := files.Front(); e != nil; e = e.Next() {
+		profile := strings.Split(e.Value.(string), "credentials-")[1]
+		profiles = append(profiles, profile)
+	}
+	return profiles
 }
