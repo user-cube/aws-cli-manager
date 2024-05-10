@@ -16,7 +16,7 @@ func displayHelp() {
 	fmt.Println("Commands:")
 	fmt.Println("  list            List all available profiles")
 	fmt.Println("  select          Select a profile")
-	fmt.Println("  credentials     Export credentials to environment variables")
+	fmt.Println("  credentials     Export credentials to environment variables, you should execute this command with eval, e.g. eval $(aws-cli-manager profile credentials)")
 	fmt.Println("  help            Display help")
 }
 
