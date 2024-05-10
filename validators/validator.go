@@ -1,3 +1,4 @@
+// Package validators provides functions to validate and install AWS CLI.
 package validators
 
 import (
@@ -7,19 +8,19 @@ import (
 	"runtime"
 )
 
-func ValidateAWSCLI() {
-	checkIfAWSCLIIsInstalled()
-}
-
+// InstallAWSCLI checks if AWS CLI is installed and installs it if not.
 func InstallAWSCLI() {
 	fmt.Println(checkIfAWSCLIIsInstalled())
 }
 
+// checkDependencies checks if curl and unzip are installed.
 func checkDependencies() {
 	checkIfCurlIsInstalled()
 	checkIfUnzipIsInstalled()
 }
 
+// checkIfAWSCLIIsInstalled checks if AWS CLI is installed.
+// If not, it installs AWS CLI.
 func checkIfAWSCLIIsInstalled() string {
 	// We need to check if aws cli is installed on the system
 	cmd := exec.Command("aws", "--version")
@@ -43,6 +44,7 @@ func checkIfAWSCLIIsInstalled() string {
 	}
 }
 
+// checkIfCurlIsInstalled checks if curl is installed.
 func checkIfCurlIsInstalled() {
 	cmd := exec.Command("curl", "--version")
 	err := cmd.Run()
@@ -56,6 +58,7 @@ func checkIfCurlIsInstalled() {
 	}
 }
 
+// checkIfUnzipIsInstalled checks if unzip is installed.
 func checkIfUnzipIsInstalled() {
 	cmd := exec.Command("unzip", "--version")
 	err := cmd.Run()
@@ -69,6 +72,7 @@ func checkIfUnzipIsInstalled() {
 	}
 }
 
+// selectDownloadingURLAccordingToArch selects the downloading URL according to the system architecture.
 func selectDownloadingURLAccordingToArch() string {
 	// We need to detect if this is a 32-bit or 64-bit system to download the correct AWS CLI package
 
@@ -81,6 +85,7 @@ func selectDownloadingURLAccordingToArch() string {
 	}
 }
 
+// detectOS detects the operating system.
 func detectOS() string {
 	// We need to detect if this is a linux or Mac system to install aws cli accordingly
 
@@ -101,6 +106,7 @@ func detectOS() string {
 	return ""
 }
 
+// installAWSCLILinux installs AWS CLI on Linux.
 func installAWSCLILinux() {
 
 	url := selectDownloadingURLAccordingToArch()
@@ -153,6 +159,7 @@ func installAWSCLILinux() {
 	}
 }
 
+// installAWSCLIMac installs AWS CLI on MacOS.
 func installAWSCLIMac() {
 	// Download AWS CLI package
 	downloadCmd := exec.Command("curl", "-o", "AWSCLIV2.pkg", "https://awscli.amazonaws.com/AWSCLIV2.pkg")
@@ -182,6 +189,7 @@ func installAWSCLIMac() {
 	}
 }
 
+// installAWSCLI detects the operating system and installs AWS CLI accordingly.
 func installAWSCLI() {
 
 	// We need to detect if this is a Linux or macOS system to install aws cli accordingly

@@ -1,15 +1,17 @@
+// Package aws provides functions to manage AWS profiles.
 package aws
 
 import (
-	"aws-cli-manager/sharedModules"
-	"bufio"
-	"container/list"
-	"fmt"
-	"github.com/jedib0t/go-pretty/v6/table"
-	"os"
-	"strings"
+	"aws-cli-manager/sharedModules"         // Importing sharedModules for common functions
+	"bufio"                                 // Importing bufio for reading user input
+	"container/list"                        // Importing list for handling lists
+	"fmt"                                   // Importing fmt for output formatting
+	"github.com/jedib0t/go-pretty/v6/table" // Importing table for creating tables
+	"os"                                    // Importing os for file and directory operations
+	"strings"                               // Importing strings for string operations
 )
 
+// SelectProfile selects an AWS profile based on user input or command line argument.
 func SelectProfile() {
 	homeDirectory := sharedModules.GetHomeDirectory()
 	userInput := ""
@@ -57,6 +59,7 @@ func SelectProfile() {
 	}
 }
 
+// ListProfiles lists all available AWS profiles and returns a list of them.
 func ListProfiles() *list.List {
 
 	// Get the home directory of the user
@@ -101,6 +104,7 @@ func ListProfiles() *list.List {
 	return files
 }
 
+// ExportCredentialsToEnvironmentVariables exports AWS credentials to environment variables.
 func ExportCredentialsToEnvironmentVariables() {
 
 	// We need to get variables from the credentials file
@@ -157,6 +161,7 @@ func ExportCredentialsToEnvironmentVariables() {
 
 }
 
+// GetProfileNames returns a list of all available AWS profile names.
 func GetProfileNames() []string {
 	// Get the home directory of the user
 	homeDirectory := sharedModules.GetHomeDirectory()

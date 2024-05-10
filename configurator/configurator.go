@@ -7,12 +7,15 @@ import (
 	"os"
 )
 
+// ConfigureAWSCLI sets up the credentials file, asks for credentials, and stores them.
 func ConfigureAWSCLI() {
 	credentialsFile, configurationFile := setUpCredentialsFile()
 	awsKeyID, awsKeySecret, region := askCredentials()
 	storeCredentials(awsKeyID, awsKeySecret, region, credentialsFile, configurationFile)
 }
 
+// setUpCredentialsFile sets up the credentials file and returns its path.
+// It creates the .aws directory if it doesn't exist.
 func setUpCredentialsFile() (credentialsFile string, configurationFile string) {
 
 	homeDirectory := sharedModules.GetHomeDirectory()
@@ -68,6 +71,7 @@ func setUpCredentialsFile() (credentialsFile string, configurationFile string) {
 
 }
 
+// askCredentials prompts the user to enter their AWS credentials and returns them.
 func askCredentials() (awsKeyID string, awsKeySecret string, region string) {
 	// Create a new scanner to read user input
 	scanner := bufio.NewScanner(os.Stdin)
@@ -97,6 +101,7 @@ func askCredentials() (awsKeyID string, awsKeySecret string, region string) {
 
 }
 
+// storeCredentials stores the provided AWS credentials in the specified credentials file.
 func storeCredentials(awsKeyID string, awsKeySecret string, region string, credentialsFile string, configurationFile string) {
 	// Open the file in append mode
 	file, err := os.OpenFile(credentialsFile, os.O_APPEND|os.O_WRONLY, 0600)
