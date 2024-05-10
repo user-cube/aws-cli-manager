@@ -11,12 +11,16 @@ func ValidateAWSCLI() {
 	checkIfAWSCLIIsInstalled()
 }
 
+func InstallAWSCLI() {
+	fmt.Println(checkIfAWSCLIIsInstalled())
+}
+
 func checkDependencies() {
 	checkIfCurlIsInstalled()
 	checkIfUnzipIsInstalled()
 }
 
-func checkIfAWSCLIIsInstalled() {
+func checkIfAWSCLIIsInstalled() string {
 	// We need to check if aws cli is installed on the system
 	cmd := exec.Command("aws", "--version")
 	err := cmd.Run()
@@ -29,7 +33,13 @@ func checkIfAWSCLIIsInstalled() {
 
 			// Ask user if he wants to install it
 			installAWSCLI()
+
+			return ""
+		} else {
+			return "AWS CLI is installed on your system"
 		}
+	} else {
+		return "AWS CLI is installed on your system"
 	}
 }
 
