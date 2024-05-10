@@ -177,7 +177,7 @@ func exportCredentialsToEnvironmentVariables() {
 		line := scanner.Text()
 		if line != "[default]" {
 			parts := strings.Split(line, "=")
-			credentials[strings.TrimSpace(parts[0])] = parts[1]
+			credentials[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
 		}
 
 	}
