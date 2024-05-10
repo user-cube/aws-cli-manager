@@ -1,12 +1,10 @@
+/*
+Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+*/
 package main
 
-import (
-	"aws-cli-manager/menus"
-	"aws-cli-manager/validators"
-)
+import "aws-cli-manager/cmd"
 
 func main() {
-	validators.ValidateAWSCLI()
-
-	menus.Menu()
+	cmd.Execute()
 }
