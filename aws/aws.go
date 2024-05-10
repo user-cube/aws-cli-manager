@@ -16,6 +16,8 @@ func displayHelp() {
 	fmt.Println("Commands:")
 	fmt.Println("  list            List all available profiles")
 	fmt.Println("  select          Select a profile")
+	fmt.Println("  credentials     Export credentials to environment variables, you should execute this command with eval, e.g. eval $(aws-cli-manager profile credentials)")
+	fmt.Println("  help            Display help")
 }
 
 func Profiles() {
@@ -28,7 +30,9 @@ func Profiles() {
 	case "list":
 		ListProfiles()
 	case "select":
-		SelectProfile()
+		selectProfile()
+	case "credentials":
+		exportCredentialsToEnvironmentVariables()
 	default:
 		fmt.Println("Invalid command")
 		displayHelp()
@@ -36,7 +40,7 @@ func Profiles() {
 	}
 }
 
-func SelectProfile() {
+func selectProfile() {
 	homeDirectory := sharedModules.GetHomeDirectory()
 	userInput := ""
 
@@ -125,4 +129,60 @@ func ListProfiles() *list.List {
 	fmt.Println(renderedTable)
 
 	return files
+}
+
+func exportCredentialsToEnvironmentVariables() {
+
+	// We need to get variables from the credentials file
+	// and export them to the environment variables
+
+	// Get the home directory of the user
+	homeDirectory := sharedModules.GetHomeDirectory()
+
+	// Get the path to the credentials file
+	credentialsFile := homeDirectory + "/.aws/credentials"
+
+	// Open the credentials file
+
+	file, err := os.Open(credentialsFile)
+
+	if err != nil {
+		fmt.Println("Error opening credentials file")
+		return
+	}
+
+	// Close the file after the function ends
+	defer file.Close()
+
+	// Create a new scanner to read the file
+
+	scanner := bufio.NewScanner(file)
+
+	// Create a map to store the credentials
+
+	credentials := make(map[string]string)
+
+	// Read the file line by line, we need to ignore the first line [default]
+	// and split the line by "=" to get the key and value
+
+	// The credentials file has the following format:
+	// [default]
+	// aws_access_key_id = YOUR_ACCESS
+	// aws_secret_access_key = YOUR_SECRET
+
+	// We need to ignore the first line and split the line by "=" to get the key and valu
+
+	for scanner.Scan() {
+
+		line := scanner.Text()
+		if line != "[default]" {
+			parts := strings.Split(line, "=")
+			credentials[strings.TrimSpace(parts[0])] = parts[1]
+		}
+
+	}
+
+	fmt.Println("AWS_ACCESS_KEY_ID=\"" + credentials["aws_access_key_id"] + "\"")
+	fmt.Println("AWS_SECRET_ACCESS_KEY=\"" + credentials["aws_secret_access_key"] + "\"")
+
 }
