@@ -1,3 +1,4 @@
+// Package sharedModules provides utility functions for the application.
 package sharedModules
 
 import (
@@ -9,6 +10,7 @@ import (
 	"strings"
 )
 
+// GetHomeDirectory returns the home directory of the current user.
 func GetHomeDirectory() string {
 	currentUser, err := user.Current()
 	if err != nil {
@@ -19,6 +21,7 @@ func GetHomeDirectory() string {
 	return currentUser.HomeDir
 }
 
+// ListFiles returns a list of files in a given directory that have a specified prefix.
 func ListFiles(directory string, prefix string) *list.List {
 	dir, err := os.Open(directory)
 	if err != nil {
@@ -46,6 +49,7 @@ func ListFiles(directory string, prefix string) *list.List {
 	return matchingFiles
 }
 
+// CheckIfAWSDirectoryExists checks if the .aws directory exists in the home directory.
 func CheckIfAWSDirectoryExists(homeDirectory string) bool {
 	// Check if the .aws directory exists
 	if _, err := os.Stat(homeDirectory + "/.aws"); os.IsNotExist(err) {
@@ -55,6 +59,7 @@ func CheckIfAWSDirectoryExists(homeDirectory string) bool {
 	return true
 }
 
+// CheckIfProfileExists checks if a specified AWS profile exists.
 func CheckIfProfileExists(profile string) bool {
 	// Check if the profile exists
 

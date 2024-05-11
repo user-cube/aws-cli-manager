@@ -1,41 +1,17 @@
+// Package aws provides functions to manage AWS profiles.
 package aws
 
 import (
-	"aws-cli-manager/sharedModules"
-	"bufio"
-	"container/list"
-	"fmt"
-	"github.com/jedib0t/go-pretty/v6/table"
-	"os"
-	"strings"
+	"aws-cli-manager/sharedModules"         // Importing sharedModules for common functions
+	"bufio"                                 // Importing bufio for reading user input
+	"container/list"                        // Importing list for handling lists
+	"fmt"                                   // Importing fmt for output formatting
+	"github.com/jedib0t/go-pretty/v6/table" // Importing table for creating tables
+	"os"                                    // Importing os for file and directory operations
+	"strings"                               // Importing strings for string operations
 )
 
-func displayHelp() {
-	// This function will display the help menu
-	fmt.Println("Usage: aws-cli-manager profile [command]")
-	fmt.Println("Commands:")
-	fmt.Println("  list            List all available profiles")
-	fmt.Println("  select          Select a profile")
-}
-
-func Profiles() {
-	if len(os.Args) < 3 {
-		displayHelp()
-		return
-	}
-
-	switch os.Args[2] {
-	case "list":
-		ListProfiles()
-	case "select":
-		SelectProfile()
-	default:
-		fmt.Println("Invalid command")
-		displayHelp()
-
-	}
-}
-
+// SelectProfile selects an AWS profile based on user input or command line argument.
 func SelectProfile() {
 	homeDirectory := sharedModules.GetHomeDirectory()
 	userInput := ""
@@ -83,6 +59,7 @@ func SelectProfile() {
 	}
 }
 
+// ListProfiles lists all available AWS profiles and returns a list of them.
 func ListProfiles() *list.List {
 
 	// Get the home directory of the user
@@ -125,4 +102,89 @@ func ListProfiles() *list.List {
 	fmt.Println(renderedTable)
 
 	return files
+}
+
+// ExportCredentialsToEnvironmentVariables exports AWS credentials to environment variables.
+func ExportCredentialsToEnvironmentVariables() {
+
+	// We need to get variables from the credentials file
+	// and export them to the environment variables
+
+	// Get the home directory of the user
+	homeDirectory := sharedModules.GetHomeDirectory()
+
+	// Get the path to the credentials file
+	credentialsFile := homeDirectory + "/.aws/credentials"
+
+	// Open the credentials file
+
+	file, err := os.Open(credentialsFile)
+
+	if err != nil {
+		fmt.Println("Error opening credentials file")
+		return
+	}
+
+	// Close the file after the function ends
+	defer file.Close()
+
+	// Create a new scanner to read the file
+
+	scanner := bufio.NewScanner(file)
+
+	// Create a map to store the credentials
+
+	credentials := make(map[string]string)
+
+	// Read the file line by line, we need to ignore the first line [default]
+	// and split the line by "=" to get the key and value
+
+	// The credentials file has the following format:
+	// [default]
+	// aws_access_key_id = YOUR_ACCESS
+	// aws_secret_access_key = YOUR_SECRET
+
+	// We need to ignore the first line and split the line by "=" to get the key and valu
+
+	for scanner.Scan() {
+
+		line := scanner.Text()
+		if line != "[default]" {
+			parts := strings.Split(line, "=")
+			credentials[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+		}
+
+	}
+
+	fmt.Println("AWS_ACCESS_KEY_ID=\"" + credentials["aws_access_key_id"] + "\"")
+	fmt.Println("AWS_SECRET_ACCESS_KEY=\"" + credentials["aws_secret_access_key"] + "\"")
+
+}
+
+// GetProfileNames returns a list of all available AWS profile names.
+func GetProfileNames() []string {
+	// Get the home directory of the user
+	homeDirectory := sharedModules.GetHomeDirectory()
+
+	// Get the path to the .aws directory
+	awsDirectory := homeDirectory + "/.aws"
+
+	// Check if the .aws directory exists
+	dirExists := sharedModules.CheckIfAWSDirectoryExists(homeDirectory)
+
+	if !dirExists {
+		fmt.Println("No profiles found")
+		os.Exit(1)
+	}
+
+	// List all files that start with "credentials" in the .aws directory
+	files := sharedModules.ListFiles(awsDirectory, "credentials-")
+
+	var profiles []string
+	// Populate the table
+	for e := files.Front(); e != nil; e = e.Next() {
+		profile := strings.Split(e.Value.(string), "credentials-")[1]
+		profiles = append(profiles, profile)
+	}
+	return profiles
 }
