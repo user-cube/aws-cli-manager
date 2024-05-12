@@ -193,27 +193,18 @@ func GetProfileNames() []string {
 // TestConnection tests the connection to AWS by executing the 'aws sts get-caller-identity' command.
 // This command returns details about the IAM user or role whose credentials are used to call the operation.
 func TestConnection() {
+
 	// The command to be executed
 	// 'aws sts get-caller-identity' returns details about the IAM user or role whose credentials are used to call the operation
-	cmd := exec.Command("aws", "sts", "get-caller-identity")
+	out, err := exec.Command("aws", "sts", "get-caller-identity").Output()
 
-	// Run the command
-	// If there's an error, print it out and exit the program
-	if err := cmd.Run(); err != nil {
+	// Check if there was an error executing the command
+	if err != nil {
 		fmt.Println("Error executing command")
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	// Get the output of the command
-	out, err := cmd.Output()
-
-	// If there's an error getting the output, print it out and exit the program
-	if err != nil {
-		fmt.Println("Error getting output")
-		os.Exit(1)
-	} else {
-		// Print the output of the command
-		fmt.Println(string(out))
-	}
+	// Print the output of the command
+	fmt.Println(string(out))
 }
