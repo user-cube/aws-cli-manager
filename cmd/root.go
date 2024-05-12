@@ -2,6 +2,7 @@
 package cmd
 
 import (
+	"aws-cli-manager/aws"
 	"aws-cli-manager/validators" // Importing the validators package
 	"fmt"
 	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
@@ -36,6 +37,14 @@ var installCmd = &cobra.Command{
 	},
 }
 
+var testConnectionCmd = &cobra.Command{
+	Use:   "testConnection",
+	Short: "Test connection to AWS",
+	Run: func(cmd *cobra.Command, args []string) {
+		aws.TestConnection() // Calls the TestConnection function from the aws package
+	},
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -47,7 +56,8 @@ func Execute() {
 
 // init function to initialize the root command and add subcommands.
 func init() {
-	rootCmd.Flags()                // Initializes flags for the root command
-	rootCmd.AddCommand(versionCmd) // Adds the 'version' command as a subcommand to the root command
-	rootCmd.AddCommand(installCmd) // Adds the 'install' command as a subcommand to the root command
+	rootCmd.Flags()                       // Initializes flags for the root command
+	rootCmd.AddCommand(versionCmd)        // Adds the 'version' command as a subcommand to the root command
+	rootCmd.AddCommand(installCmd)        // Adds the 'install' command as a subcommand to the root command
+	rootCmd.AddCommand(testConnectionCmd) // Adds the 'testConnection' command as a subcommand to the root command
 }
