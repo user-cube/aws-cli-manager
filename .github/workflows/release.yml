@@ -13,7 +13,7 @@ permissions:
   issues: write
 
 jobs:
-  goreleaser:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
           distribution: goreleaser
           # 'latest', 'nightly', or a semver
           version: latest
-          args: release --clean
+          args: release --clean --ldflags="-X -X pkg/config.Version=${GITHUB_REF#refs/tags/} -X pkg/config.buildDate=$(date +%Y-%m-%d)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
