@@ -33,7 +33,10 @@ jobs:
           distribution: goreleaser
           # 'latest', 'nightly', or a semver
           version: latest
-          args: release --clean --ldflags="-X pkg/config.Version=${GITHUB_REF#refs/tags/} -X pkg/config.buildDate=$(date +%Y-%m-%d)"
+
+          ldflags: "-X pkg/config.Version=${GITHUB_REF#refs/tags/} -X pkg/config.buildDate=$(date +%Y-%m-%d)"
+
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
