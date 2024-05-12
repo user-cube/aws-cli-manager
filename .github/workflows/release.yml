@@ -34,7 +34,7 @@ jobs:
           # 'latest', 'nightly', or a semver
           version: latest
 
-          ldflags: "-X pkg/config.version=${GITHUB_REF#refs/tags/} -X pkg/config.date=$(date +%Y-%m-%d)"
+          ldflags: "-X aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/} -X aws-cli-manager/pkg/config.date=$(date +%Y-%m-%d)"
 
           args: release --clean
         env:
