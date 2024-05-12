@@ -3,8 +3,8 @@ package config
 import "fmt"
 
 var (
-	Version string
-	Date    string
+	Version = ""
+	Date    = ""
 )
 
 func LogVersion() {

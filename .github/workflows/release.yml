@@ -34,7 +34,7 @@ jobs:
           # 'latest', 'nightly', or a semver
           version: latest
 
-          ldflags: "-X pkg/config.Version=${GITHUB_REF#refs/tags/} -X pkg/config.buildDate=$(date +%Y-%m-%d)"
+          ldflags: "-X pkg/config/config.Version=${GITHUB_REF#refs/tags/} -X pkg/config/config.buildDate=$(date +%Y-%m-%d)"
 
           args: release --clean
         env:
