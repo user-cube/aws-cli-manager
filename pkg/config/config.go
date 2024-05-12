@@ -3,10 +3,10 @@ package config
 import "fmt"
 
 var (
-	Version = ""
-	Date    = ""
+	version = ""
+	date    = ""
 )
 
 func LogVersion() {
-	fmt.Println("AWS CLI Manager version " + Version + ", release date: " + Date) // Prints the version of the AWS CLI Manager
+	fmt.Println("AWS CLI Manager version " + version + ", release date: " + date) // Prints the version of the AWS CLI Manager
 }
