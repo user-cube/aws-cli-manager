@@ -36,6 +36,5 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ldflags: "-X aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/} -X aws-cli-manager/pkg/config.date=$(date +%Y-%m-%d)"
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
