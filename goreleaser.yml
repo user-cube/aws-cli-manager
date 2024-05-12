@@ -1,3 +1,2 @@
-# .goreleaser.yml
 builds:
-  - ldflags: "-X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}"
+  - ldflags: -X aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/} -X aws-cli-manager/pkg/config.date=$(date +%Y-%m-%d)
