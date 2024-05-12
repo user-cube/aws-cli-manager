@@ -3,14 +3,12 @@ package cmd
 
 import (
 	"aws-cli-manager/pkg/aws"
+	"aws-cli-manager/pkg/config"
 	"aws-cli-manager/pkg/validators"
 	"fmt"
 	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
 	"os"
 )
-
-// version holds the current version of the AWS CLI Manager.
-var version = "1.2.0"
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
@@ -23,7 +21,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Display version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("AWS CLI Manager version " + version) // Prints the version of the AWS CLI Manager
+		config.LogVersion()
 	},
 }
 
