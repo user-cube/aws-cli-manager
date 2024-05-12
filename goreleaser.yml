@@ -1,2 +1,9 @@
 builds:
-  - ldflags: -X aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/} -X aws-cli-manager/pkg/config.date=$(date +%Y-%m-%d)
+  - ldflags: -s -w -X aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/}
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
