@@ -2,8 +2,8 @@
 package cmd
 
 import (
-	"aws-cli-manager/aws"
-	"aws-cli-manager/validators" // Importing the validators package
+	"aws-cli-manager/pkg/aws"
+	"aws-cli-manager/pkg/validators"
 	"fmt"
 	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
 	"os"

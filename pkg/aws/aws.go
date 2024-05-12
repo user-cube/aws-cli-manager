@@ -2,7 +2,7 @@
 package aws
 
 import (
-	"aws-cli-manager/sharedModules"         // Importing sharedModules for common functions
+	"aws-cli-manager/pkg/sharedModules"
 	"bufio"                                 // Importing bufio for reading user input
 	"container/list"                        // Importing list for handling lists
 	"fmt"                                   // Importing fmt for output formatting

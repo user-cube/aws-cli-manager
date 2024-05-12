@@ -1,7 +1,7 @@
 package configurator
 
 import (
-	"aws-cli-manager/sharedModules"
+	"aws-cli-manager/pkg/sharedModules"
 	"bufio"
 	"fmt"
 	"os"

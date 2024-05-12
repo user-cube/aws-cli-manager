@@ -2,9 +2,9 @@
 package cmd
 
 import (
-	"aws-cli-manager/aws"          // Importing the aws package
-	"aws-cli-manager/configurator" // Importing the configurator package
-	"github.com/spf13/cobra"       // Importing the cobra package for creating CLI applications
+	"aws-cli-manager/pkg/aws"
+	"aws-cli-manager/pkg/configurator"
+	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
 )
 
 // profileCmd represents the 'profile' command.
