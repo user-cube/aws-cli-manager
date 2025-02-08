@@ -2,192 +2,55 @@
 package aws
 
 import (
-	"aws-cli-manager/pkg/sharedModules"
-	"bufio"                                 // Importing bufio for reading user input
-	"container/list"                        // Importing list for handling lists
+	"aws-cli-manager/pkg/profile"
 	"fmt"                                   // Importing fmt for output formatting
 	"github.com/jedib0t/go-pretty/v6/table" // Importing table for creating tables
 	"os"                                    // Importing os for file and directory operations
 	"os/exec"
-	"strings" // Importing strings for string operations
 )
 
-// SelectProfile selects an AWS profile based on user input or command line argument.
-func SelectProfile() {
-	homeDirectory := sharedModules.GetHomeDirectory()
-	userInput := ""
-
-	// Check if arguments are provided
-	if len(os.Args) < 4 {
-		ListProfiles()
-
-		// Create a new scanner to read user input
-		scanner := bufio.NewScanner(os.Stdin)
-
-		// Prompt the user to enter a string
-		fmt.Print("Please select a profile: ")
-
-		// Read the user input
-		scanner.Scan()
-		userInput = scanner.Text()
-	} else {
-		userInput = os.Args[3]
-	}
-
-	// Check if the profile exists
-	profileExists := sharedModules.CheckIfProfileExists(userInput)
-
-	if !profileExists {
-		fmt.Println("Profile does not exist")
-		return
-	} else {
-
-		// Copy file .aws/credentials-profile to .aws/credentials
-		err := sharedModules.CopyFile(homeDirectory+"/.aws/credentials-"+userInput, homeDirectory+"/.aws/credentials")
-		if err != nil {
-			fmt.Println("Error copying credentials file")
-			return
-		}
-
-		// Copy file .aws/config-profile to .aws/config
-		err = sharedModules.CopyFile(homeDirectory+"/.aws/config-"+userInput, homeDirectory+"/.aws/config")
-		if err != nil {
-			fmt.Println("Error copying config file")
-			return
-		}
-
-		fmt.Println("Profile selected successfully, using profile: " + userInput)
-	}
-}
-
 // ListProfiles lists all available AWS profiles and returns a list of them.
-func ListProfiles() *list.List {
+func ListProfiles() {
 
-	// Get the home directory of the user
-	homeDirectory := sharedModules.GetHomeDirectory()
+	_, awsProfiles := profile.GetProfiles()
 
-	// Get the path to the .aws directory
-	awsDirectory := homeDirectory + "/.aws"
-
-	// Check if the .aws directory exists
-	dirExists := sharedModules.CheckIfAWSDirectoryExists(homeDirectory)
-
-	if !dirExists {
-		fmt.Println("No profiles found")
-		return nil
-	}
-
-	// List all files that start with "credentials" in the .aws directory
-	files := sharedModules.ListFiles(awsDirectory, "credentials-")
-
-	// Create a new table
 	t := table.NewWriter()
-	t.SetOutputMirror(nil)
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"Profile Name", "Region", "SSO Enabled"})
+
+	// Fill the table with the profiles
+	for awsProfile, details := range awsProfiles.Profiles {
+		t.AppendRow(table.Row{
+			awsProfile,
+			details.Region,
+			fmt.Sprintf("%v", details.SSOEnabled),
+		})
+	}
+
 	t.SetStyle(table.StyleLight)
-
-	// Define table headers
-	t.AppendHeader(table.Row{"Name", "File Name", "File Location"})
-
-	// Populate the table
-	for e := files.Front(); e != nil; e = e.Next() {
-		profile := strings.Split(e.Value.(string), "credentials-")[1]
-		fileName := e.Value.(string)
-		fileLocation := awsDirectory + "/" + fileName
-		t.AppendRow([]interface{}{profile, fileName, fileLocation})
-	}
-
-	// Render the table
-	renderedTable := t.Render()
-
-	// Print the rendered table
-	fmt.Println(renderedTable)
-
-	return files
-}
-
-// ExportCredentialsToEnvironmentVariables exports AWS credentials to environment variables.
-func ExportCredentialsToEnvironmentVariables() {
-
-	// We need to get variables from the credentials file
-	// and export them to the environment variables
-
-	// Get the home directory of the user
-	homeDirectory := sharedModules.GetHomeDirectory()
-
-	// Get the path to the credentials file
-	credentialsFile := homeDirectory + "/.aws/credentials"
-
-	// Open the credentials file
-
-	file, err := os.Open(credentialsFile)
-
-	if err != nil {
-		fmt.Println("Error opening credentials file")
-		return
-	}
-
-	// Close the file after the function ends
-	defer file.Close()
-
-	// Create a new scanner to read the file
-
-	scanner := bufio.NewScanner(file)
-
-	// Create a map to store the credentials
-
-	credentials := make(map[string]string)
-
-	// Read the file line by line, we need to ignore the first line [default]
-	// and split the line by "=" to get the key and value
-
-	// The credentials file has the following format:
-	// [default]
-	// aws_access_key_id = YOUR_ACCESS
-	// aws_secret_access_key = YOUR_SECRET
-
-	// We need to ignore the first line and split the line by "=" to get the key and valu
-
-	for scanner.Scan() {
-
-		line := scanner.Text()
-		if line != "[default]" {
-			parts := strings.Split(line, "=")
-			credentials[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
-		}
-
-	}
-
-	fmt.Println("AWS_ACCESS_KEY_ID=\"" + credentials["aws_access_key_id"] + "\"")
-	fmt.Println("AWS_SECRET_ACCESS_KEY=\"" + credentials["aws_secret_access_key"] + "\"")
+	t.Render()
 
 }
 
-// GetProfileNames returns a list of all available AWS profile names.
-func GetProfileNames() []string {
-	// Get the home directory of the user
-	homeDirectory := sharedModules.GetHomeDirectory()
+// AddProfile adds a new AWS profile to the configuration file.
+func AddProfile() {
 
-	// Get the path to the .aws directory
-	awsDirectory := homeDirectory + "/.aws"
+	profileName := profile.PromptProfileName()
 
-	// Check if the .aws directory exists
-	dirExists := sharedModules.CheckIfAWSDirectoryExists(homeDirectory)
-
-	if !dirExists {
-		fmt.Println("No profiles found")
+	// Check if the profile already exists
+	_, awsProfiles := profile.GetProfiles()
+	if _, ok := awsProfiles.Profiles[profileName]; ok {
+		fmt.Println("Profile already exists")
 		os.Exit(1)
 	}
 
-	// List all files that start with "credentials" in the .aws directory
-	files := sharedModules.ListFiles(awsDirectory, "credentials-")
+	// Prompt the user for profile details
+	profileDetails := profile.PromptProfileDetails()
 
-	var profiles []string
-	// Populate the table
-	for e := files.Front(); e != nil; e = e.Next() {
-		profile := strings.Split(e.Value.(string), "credentials-")[1]
-		profiles = append(profiles, profile)
-	}
-	return profiles
+	// Add the profile to the configuration file
+	profile.AddProfile(profileName, profileDetails)
+
+	fmt.Println("Profile added successfully")
 }
 
 // TestConnection tests the connection to AWS by executing the 'aws sts get-caller-identity' command.

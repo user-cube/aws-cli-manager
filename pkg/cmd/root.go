@@ -4,7 +4,8 @@ package cmd
 import (
 	"aws-cli-manager/pkg/aws"
 	"aws-cli-manager/pkg/config"
-	"aws-cli-manager/pkg/validators"
+	"aws-cli-manager/pkg/installer"
+	"aws-cli-manager/pkg/profile"
 	"fmt"
 	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
 	"os"
@@ -14,6 +15,9 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "aws-cli-manager",
 	Short: "AWS CLI Manager is a tool to manage AWS CLI profiles",
+	Run: func(cmd *cobra.Command, args []string) {
+		profile.SelectProfile()
+	},
 }
 
 // versionCmd represents the 'version' command.
@@ -31,12 +35,12 @@ var installCmd = &cobra.Command{
 	Short: "Install AWS CLI tool from AWS official website",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Installing AWS CLI")
-		validators.InstallAWSCLI() // Calls the InstallAWSCLI function from the validators package
+		installer.InstallAWSCLI() // Calls the InstallAWSCLI function from the installer package
 	},
 }
 
 var testConnectionCmd = &cobra.Command{
-	Use:   "testConnection",
+	Use:   "test",
 	Short: "Test connection to AWS",
 	Run: func(cmd *cobra.Command, args []string) {
 		aws.TestConnection() // Calls the TestConnection function from the aws package
