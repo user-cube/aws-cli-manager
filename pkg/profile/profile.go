@@ -206,8 +206,8 @@ func AddProfile(profileName string, profileDetails models.ProfileDetails) {
 	// Append the new profile details to the global profile
 	globalProfile := awsProfiles.Profiles["global"]
 	globalProfile.Config += fmt.Sprintf("\n[profile %s]\n%s", profileName, profileDetails.Config)
-	globalProfile.Credentials += fmt.Sprintf("\n[profile %s]\n%s", profileName, profileDetails.Credentials)
-	globalProfile.SSOEnabled = globalProfile.SSOEnabled || profileDetails.SSOEnabled
+	globalProfile.Credentials += fmt.Sprintf("\n[%s]\n%s", profileName, profileDetails.Credentials)
+	globalProfile.SSOEnabled = false
 
 	// Update the global profile in the map
 	awsProfiles.Profiles["global"] = globalProfile
