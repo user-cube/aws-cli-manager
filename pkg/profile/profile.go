@@ -115,11 +115,21 @@ func setProfile(selectedProfile string, awsProfiles models.AwsProfile) {
 	fmt.Println("Profile set successfully")
 
 	if ssoEnabled {
+		checkSSOSession()
+	}
+}
+
+func checkSSOSession() {
+	// Check if the SSO session is valid
+	err := exec.Command("aws", "sts", "get-caller-identity").Run()
+	if err != nil {
+		fmt.Println("SSO session is invalid, starting a new session...")
 		err = exec.Command("aws", "sso", "login").Run()
 		if err != nil {
-			fmt.Println(fmt.Errorf("error logging in with SSO: %v", err))
+			log.Fatalf("Failed to start a new SSO session: %v", err)
 		}
 	}
+
 }
 
 func PromptProfileName() string {
