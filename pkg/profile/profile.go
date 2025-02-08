@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -49,7 +48,8 @@ func GetProfiles() (profileNames []string, awsProfiles models.AwsProfile) {
 		saveProfiles(awsProfiles)
 	}
 
-	yamlData, err := ioutil.ReadFile(filePath)
+	// Read the YAML file into yamlData
+	yamlData, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("Failed to read the file: %v", err)
 	}
@@ -79,8 +79,8 @@ func setProfile(selectedProfile string, awsProfiles models.AwsProfile) {
 
 	header := "[default]"
 
-	if ssoEnabled {
-		header = fmt.Sprintf("[profile %s]", selectedProfile)
+	if selectedProfile == "global" {
+		header = ""
 	}
 
 	// Define file paths
@@ -124,13 +124,21 @@ func setProfile(selectedProfile string, awsProfiles models.AwsProfile) {
 
 func PromptProfileName() string {
 	var profileName string
-	prompt := &survey.Input{
-		Message: "Enter the profile name:",
-	}
+	for {
+		prompt := &survey.Input{
+			Message: "Enter the profile name:",
+		}
 
-	err := survey.AskOne(prompt, &profileName)
-	if err != nil {
-		log.Fatalf("Failed to get profile name: %v", err)
+		err := survey.AskOne(prompt, &profileName)
+		if err != nil {
+			log.Fatalf("Failed to get profile name: %v", err)
+		}
+
+		if profileName == "global" {
+			fmt.Println("The profile name 'global' is reserved. Please enter a different name.")
+		} else {
+			break
+		}
 	}
 
 	return profileName
@@ -186,13 +194,23 @@ func AddProfile(profileName string, profileDetails models.ProfileDetails) {
 	// Get the existing profiles
 	_, awsProfiles := GetProfiles()
 
-	// Check if the profile already exists
-	if _, ok := awsProfiles.Profiles[profileName]; ok {
-		log.Fatalf("Profile already exists")
+	// Check if the global profile exists, if not create it
+	if _, ok := awsProfiles.Profiles["global"]; !ok {
+		awsProfiles.Profiles["global"] = models.ProfileDetails{
+			Config:      "",
+			Credentials: "",
+			SSOEnabled:  false,
+		}
 	}
 
-	// Add the profile to the configuration file
-	awsProfiles.Profiles[profileName] = profileDetails
+	// Append the new profile details to the global profile
+	globalProfile := awsProfiles.Profiles["global"]
+	globalProfile.Config += fmt.Sprintf("\n[profile %s]\n%s", profileName, profileDetails.Config)
+	globalProfile.Credentials += fmt.Sprintf("\n[profile %s]\n%s", profileName, profileDetails.Credentials)
+	globalProfile.SSOEnabled = globalProfile.SSOEnabled || profileDetails.SSOEnabled
+
+	// Update the global profile in the map
+	awsProfiles.Profiles["global"] = globalProfile
 
 	// Save the updated profiles to the configuration file
 	saveProfiles(awsProfiles)
