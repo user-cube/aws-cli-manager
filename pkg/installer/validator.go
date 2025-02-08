@@ -105,8 +105,10 @@ func detectOS() string {
 	case "linux":
 		fmt.Println("Linux System detected, proceeding to install AWS CLI")
 		return "linux"
+	case "windows":
+		return "windows"
 	default:
-		message := fmt.Errorf("unsupported OS detected, please use MacOS or Linux")
+		message := fmt.Errorf("unsupported OS detected, please use MacOS, Linux or Windows")
 		log.Fatalf("%v", message)
 	}
 
@@ -200,6 +202,23 @@ func installAWSCLIMac() {
 	}
 }
 
+// installAWSCLIWindows installs AWS CLI on Windows.
+func installAWSCLIWindows() {
+
+	// Install AWS CLI package
+	installCmd := exec.Command(
+		"msiexec",
+		"/i",
+		"https://awscli.amazonaws.com/AWSCLIV2.msi",
+	)
+	installCmd.Stdout = os.Stdout
+	installCmd.Stderr = os.Stderr
+	if err := installCmd.Run(); err != nil {
+		message := fmt.Errorf("error installing aws cli: %v", err)
+		log.Fatalf("%v", message)
+	}
+}
+
 // installAWSCLI detects the operating system and installs AWS CLI accordingly.
 func installAWSCLI() {
 
@@ -209,8 +228,13 @@ func installAWSCLI() {
 
 	if osSystem == "darwin" {
 		installAWSCLIMac()
-	} else {
+	} else if osSystem == "linux" {
 		installAWSCLILinux()
+	} else if osSystem == "windows" {
+		installAWSCLIWindows()
+	} else {
+		message := fmt.Errorf("unsupported OS detected, please use MacOS, Linux or Windows")
+		log.Fatalf("%v", message)
 	}
 
 	fmt.Println("AWS CLI installed successfully")
