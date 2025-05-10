@@ -21,7 +21,7 @@ go build
 ## Install with go install
 
 ```bash
-go install github.com/user-cube/aws-cli-manager@latest
+go install github.com/user-cube/aws-cli-manager/v2@latest
 ```
 
 ## Install from compiled binary

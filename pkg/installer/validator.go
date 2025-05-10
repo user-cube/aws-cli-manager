@@ -9,7 +9,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/user-cube/aws-cli-manager/pkg/settings"
+	"github.com/user-cube/aws-cli-manager/v2/pkg/settings"
 )
 
 // InstallAWSCLI checks if AWS CLI is installed and installs it if not.

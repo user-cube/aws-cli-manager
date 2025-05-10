@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/user-cube/aws-cli-manager/pkg/models"
-	"github.com/user-cube/aws-cli-manager/pkg/settings"
-	"github.com/user-cube/aws-cli-manager/pkg/sharedModules"
+	"github.com/user-cube/aws-cli-manager/v2/pkg/models"
+	"github.com/user-cube/aws-cli-manager/v2/pkg/settings"
+	"github.com/user-cube/aws-cli-manager/v2/pkg/sharedModules"
 	"gopkg.in/yaml.v2"
 )
 
