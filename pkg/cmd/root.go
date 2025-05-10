@@ -2,13 +2,14 @@
 package cmd
 
 import (
-	"aws-cli-manager/pkg/aws"
-	"aws-cli-manager/pkg/config"
-	"aws-cli-manager/pkg/installer"
-	"aws-cli-manager/pkg/profile"
 	"fmt"
-	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
 	"os"
+
+	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
+	"github.com/user-cube/aws-cli-manager/pkg/aws"
+	"github.com/user-cube/aws-cli-manager/pkg/config"
+	"github.com/user-cube/aws-cli-manager/pkg/installer"
+	"github.com/user-cube/aws-cli-manager/pkg/profile"
 )
 
 // rootCmd represents the base command when called without any subcommands.

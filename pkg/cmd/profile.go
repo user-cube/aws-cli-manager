@@ -2,8 +2,8 @@
 package cmd
 
 import (
-	"aws-cli-manager/pkg/aws"
 	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
+	"github.com/user-cube/aws-cli-manager/pkg/aws"
 )
 
 // profileCmd represents the 'profile' command.

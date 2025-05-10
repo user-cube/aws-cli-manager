@@ -1,16 +1,17 @@
 package profile
 
 import (
-	"aws-cli-manager/pkg/models"
-	"aws-cli-manager/pkg/settings"
-	"aws-cli-manager/pkg/sharedModules"
 	"fmt"
-	"github.com/AlecAivazis/survey/v2"
-	"gopkg.in/yaml.v2"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/user-cube/aws-cli-manager/pkg/models"
+	"github.com/user-cube/aws-cli-manager/pkg/settings"
+	"github.com/user-cube/aws-cli-manager/pkg/sharedModules"
+	"gopkg.in/yaml.v2"
 )
 
 func SelectProfile() {

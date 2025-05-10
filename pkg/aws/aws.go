@@ -2,11 +2,12 @@
 package aws
 
 import (
-	"aws-cli-manager/pkg/profile"
-	"fmt"                                   // Importing fmt for output formatting
-	"github.com/jedib0t/go-pretty/v6/table" // Importing table for creating tables
-	"os"                                    // Importing os for file and directory operations
+	"fmt" // Importing fmt for output formatting
+	"os"  // Importing os for file and directory operations
 	"os/exec"
+
+	"github.com/jedib0t/go-pretty/v6/table" // Importing table for creating tables
+	"github.com/user-cube/aws-cli-manager/pkg/profile"
 )
 
 // ListProfiles lists all available AWS profiles and returns a list of them.
