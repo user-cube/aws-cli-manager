@@ -1,10 +1,10 @@
 builds:
-  - ldflags: -s -w -X aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/}
-    goos:
-      - linux
-      - darwin
-      - windows
-    goarch:
-      - amd64
-      - arm64
-      - 386
+- ldflags: -s -w -X github.com/user-cube/aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/}
+  goos:
+  - linux
+  - darwin
+  - windows
+  goarch:
+  - amd64
+  - arm64
+  - 386

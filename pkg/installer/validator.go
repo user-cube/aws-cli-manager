@@ -2,13 +2,14 @@
 package installer
 
 import (
-	"aws-cli-manager/pkg/settings"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
+
+	"github.com/user-cube/aws-cli-manager/pkg/settings"
 )
 
 // InstallAWSCLI checks if AWS CLI is installed and installs it if not.

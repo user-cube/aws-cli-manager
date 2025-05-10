@@ -18,6 +18,12 @@ cd aws-cli-manager
 go build
 ```
 
+## Install with go install
+
+```bash
+go install github.com/user-cube/aws-cli-manager@latest
+```
+
 ## Install from compiled binary
 
 You can also download the compiled binary from the [releases](https://github.com/user-cube/aws-cli-manager/releases/latest) page.
