@@ -7,7 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/jedib0t/go-pretty/v6/table" // Importing table for creating tables
-	"github.com/user-cube/aws-cli-manager/pkg/profile"
+	"github.com/user-cube/aws-cli-manager/v2/pkg/profile"
 )
 
 // ListProfiles lists all available AWS profiles and returns a list of them.

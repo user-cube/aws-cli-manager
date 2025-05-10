@@ -1,4 +1,4 @@
-module github.com/user-cube/aws-cli-manager
+module github.com/user-cube/aws-cli-manager/v2
 
 go 1.21
 

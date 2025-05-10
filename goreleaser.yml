@@ -1,5 +1,5 @@
 builds:
-- ldflags: -s -w -X github.com/user-cube/aws-cli-manager/pkg/config.version=${GITHUB_REF#refs/tags/}
+- ldflags: -s -w -X github.com/user-cube/aws-cli-manager/v2/pkg/config.version=${GITHUB_REF#refs/tags/}
   goos:
   - linux
   - darwin
