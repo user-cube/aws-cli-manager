@@ -23,3 +23,6 @@ go.work
 .idea/
 
 aws-cli-manager
+
+*.cast
+aws-cli-manager.gif
