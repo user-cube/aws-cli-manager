@@ -1,10 +1,46 @@
+# goreleaser.yml
+# This is a GoReleaser configuration file
+# For documentation on all options, see https://goreleaser.com/config/
+
+version: 2
+
+project_name: kontext
+
+before:
+  hooks:
+  - go mod tidy
+
 builds:
-- ldflags: -s -w -X github.com/user-cube/aws-cli-manager/v2/pkg/config.version=${GITHUB_REF#refs/tags/}
+- env:
+  - CGO_ENABLED=0
+  ldflags:
+  - -s -w -X github.com/user-cube/aws-cli-manager/v2/cmd.Version={{ .Env.VERSION }} -X github.com/user-cube/aws-cli-manager/v2/cmd.GitCommit={{ .Env.GIT_COMMIT }} -X github.com/user-cube/aws-cli-manager/v2/cmd.BuildDate={{ .Env.BUILD_DATE }}
   goos:
   - linux
   - darwin
-  - windows
   goarch:
   - amd64
   - arm64
-  - 386
+
+archives:
+- format: tar.gz
+  name_template: >-
+    {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+  files:
+  - README.md
+  - LICENSE
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+    - '^ci:'
+    - '^chore:'
