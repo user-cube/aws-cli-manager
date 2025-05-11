@@ -7,7 +7,6 @@ import (
 
 	"github.com/spf13/cobra" // Importing the cobra package for creating CLI applications
 	"github.com/user-cube/aws-cli-manager/v2/pkg/aws"
-	"github.com/user-cube/aws-cli-manager/v2/pkg/config"
 	"github.com/user-cube/aws-cli-manager/v2/pkg/installer"
 	"github.com/user-cube/aws-cli-manager/v2/pkg/profile"
 )
@@ -18,15 +17,6 @@ var rootCmd = &cobra.Command{
 	Short: "AWS CLI Manager is a tool to manage AWS CLI profiles",
 	Run: func(cmd *cobra.Command, args []string) {
 		profile.SelectProfile()
-	},
-}
-
-// versionCmd represents the 'version' command.
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Display version",
-	Run: func(cmd *cobra.Command, args []string) {
-		config.LogVersion()
 	},
 }
 
@@ -48,6 +38,14 @@ var testConnectionCmd = &cobra.Command{
 	},
 }
 
+var currentProfileCmd = &cobra.Command{
+	Use:   "current",
+	Short: "Show the currently selected AWS profile",
+	Run: func(cmd *cobra.Command, args []string) {
+		profile.ShowCurrentProfile() // Calls the ShowCurrentProfile function from the profile package
+	},
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -59,8 +57,8 @@ func Execute() {
 
 // init function to initialize the root command and add subcommands.
 func init() {
-	rootCmd.Flags()                       // Initializes flags for the root command
-	rootCmd.AddCommand(versionCmd)        // Adds the 'version' command as a subcommand to the root command
+	rootCmd.Flags()                       // Initializes flags for the root command   // Adds the 'version' command as a subcommand to the root command
 	rootCmd.AddCommand(installCmd)        // Adds the 'install' command as a subcommand to the root command
 	rootCmd.AddCommand(testConnectionCmd) // Adds the 'testConnection' command as a subcommand to the root command
+	rootCmd.AddCommand(currentProfileCmd) // Adds the 'currentProfile' command as a subcommand to the root command
 }
