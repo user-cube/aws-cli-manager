@@ -227,13 +227,14 @@ func installAWSCLI() {
 
 	osSystem := detectOS()
 
-	if osSystem == "darwin" {
+	switch osSystem {
+	case "darwin":
 		installAWSCLIMac()
-	} else if osSystem == "linux" {
+	case "linux":
 		installAWSCLILinux()
-	} else if osSystem == "windows" {
+	case "windows":
 		installAWSCLIWindows()
-	} else {
+	default:
 		message := fmt.Errorf("unsupported OS detected, please use MacOS, Linux or Windows")
 		log.Fatalf("%v", message)
 	}
