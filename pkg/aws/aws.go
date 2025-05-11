@@ -21,7 +21,7 @@ func ListProfiles() {
 
 	// Fill the table with the profiles
 	for awsProfile, details := range awsProfiles.Profiles {
-		ssoStatus := "No"
+		var ssoStatus string
 		if details.SSOEnabled {
 			ssoStatus = color.GreenString("Yes")
 		} else {
