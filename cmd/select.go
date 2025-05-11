@@ -13,7 +13,12 @@ var selectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			// If no profile is specified, show the selection menu
-			profile.SelectProfile()
+			// SelectProfile now returns a boolean indicating whether a profile was selected
+			selected := profile.SelectProfile()
+			if !selected {
+				// User cancelled the selection with Ctrl+C
+				return
+			}
 		} else {
 			// If a profile is specified, select it directly
 			profileName := args[0]
