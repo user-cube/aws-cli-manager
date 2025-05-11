@@ -1,7 +1,8 @@
 package models
 
 type AwsProfile struct {
-	Profiles map[string]ProfileDetails `yaml:"profiles"`
+	Profiles       map[string]ProfileDetails `yaml:"profiles"`
+	CurrentProfile string                    `yaml:"currentProfile"`
 }
 
 type ProfileDetails struct {

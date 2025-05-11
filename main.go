@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/user-cube/aws-cli-manager/v2/pkg/cmd"
+	"github.com/user-cube/aws-cli-manager/v2/cmd"
 )
 
 // main is the entry point function of the application.
