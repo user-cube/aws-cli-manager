@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/manifoldco/promptui"
 	"github.com/user-cube/aws-cli-manager/v2/pkg/models"
 	"github.com/user-cube/aws-cli-manager/v2/pkg/settings"
 	"github.com/user-cube/aws-cli-manager/v2/pkg/sharedModules"
@@ -15,7 +16,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func SelectProfile() {
+func SelectProfile() bool {
 	// Get current profile first
 	currentProfile := GetCurrentProfile()
 	profileNames, awsProfiles := GetProfiles()
@@ -52,6 +53,12 @@ func SelectProfile() {
 
 	index, _, err := prompt.Run()
 	if err != nil {
+		// Check if it's an interrupt error (Ctrl+C)
+		if err == promptui.ErrInterrupt {
+			fmt.Println("\nProfile selection cancelled")
+			return false
+		}
+		// Handle other errors
 		ui.PrintError("Error selecting profile: %v", err)
 		os.Exit(1)
 	}
@@ -59,6 +66,7 @@ func SelectProfile() {
 	// Get the selected profile name
 	selectedProfile := sortedNames[index]
 	setProfile(selectedProfile, awsProfiles)
+	return true
 }
 
 func GetProfiles() (profileNames []string, awsProfiles models.AwsProfile) {
@@ -203,6 +211,12 @@ func PromptProfileName() string {
 
 		result, err := prompt.Run()
 		if err != nil {
+			// Check if it's an interrupt error (Ctrl+C)
+			if err == promptui.ErrInterrupt {
+				fmt.Println("\nProfile creation cancelled")
+				os.Exit(0)
+			}
+			// Handle other errors
 			ui.PrintError("Failed to get profile name: %v", err)
 			os.Exit(1)
 		}
@@ -231,6 +245,11 @@ func PromptProfileDetails() models.ProfileDetails {
 
 	region, err := regionPrompt.Run()
 	if err != nil {
+		// Check if it's an interrupt error (Ctrl+C)
+		if err == promptui.ErrInterrupt {
+			fmt.Println("\nProfile creation cancelled")
+			os.Exit(0)
+		}
 		ui.PrintError("Failed to get region: %v", err)
 		os.Exit(1)
 	}
@@ -244,6 +263,11 @@ func PromptProfileDetails() models.ProfileDetails {
 
 	ssoIndex, _, err := ssoPrompt.Run()
 	if err != nil {
+		// Check if it's an interrupt error (Ctrl+C)
+		if err == promptui.ErrInterrupt {
+			fmt.Println("\nProfile creation cancelled")
+			os.Exit(0)
+		}
 		ui.PrintError("Failed to get SSO information: %v", err)
 		os.Exit(1)
 	}
@@ -257,6 +281,11 @@ func PromptProfileDetails() models.ProfileDetails {
 
 	config, err := configPrompt.Run()
 	if err != nil {
+		// Check if it's an interrupt error (Ctrl+C)
+		if err == promptui.ErrInterrupt {
+			fmt.Println("\nProfile creation cancelled")
+			os.Exit(0)
+		}
 		ui.PrintError("Failed to get config file information: %v", err)
 		os.Exit(1)
 	}
@@ -275,6 +304,11 @@ func PromptProfileDetails() models.ProfileDetails {
 
 	credentials, err := credentialsPrompt.Run()
 	if err != nil {
+		// Check if it's an interrupt error (Ctrl+C)
+		if err == promptui.ErrInterrupt {
+			fmt.Println("\nProfile creation cancelled")
+			os.Exit(0)
+		}
 		ui.PrintError("Failed to get credentials file information: %v", err)
 		os.Exit(1)
 	}

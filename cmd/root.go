@@ -16,6 +16,8 @@ var rootCmd = &cobra.Command{
 	Use:   "aws-cli-manager",
 	Short: "AWS CLI Manager is a tool to manage AWS CLI profiles",
 	Run: func(cmd *cobra.Command, args []string) {
+		// SelectProfile now returns a boolean indicating whether a profile was selected
+		// We don't need to do anything with the return value here
 		profile.SelectProfile()
 	},
 }
