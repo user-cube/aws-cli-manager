@@ -14,7 +14,7 @@ builds:
 - env:
   - CGO_ENABLED=0
   ldflags:
-  - -s -w -X github.com/user-cube/aws-cli-manager/v2/cmd.Version={{ .Env.VERSION }} -X github.com/user-cube/aws-cli-manager/v2/cmd.GitCommit={{ .Env.GIT_COMMIT }} -X github.com/user-cube/aws-cli-manager/v2/cmd.BuildDate={{ .Env.BUILD_DATE }}
+  - -s -w -X github.com/user-cube/aws-cli-manager/v2/cmd.Version={{ .Version }} -X github.com/user-cube/aws-cli-manager/v2/cmd.GitCommit={{ .ShortCommit }} -X github.com/user-cube/aws-cli-manager/v2/cmd.BuildDate={{ .Date }}
   goos:
   - linux
   - darwin
@@ -29,6 +29,20 @@ archives:
   files:
   - README.md
   - LICENSE
+
+brews:
+- repository:
+    owner: user-cube
+    name: homebrew-tap
+    token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+  directory: Formula
+  homepage: https://github.com/user-cube/aws-cli-manager
+  description: "CLI tool for managing AWS CLI"
+  license: Apache-2.0
+  install: |
+    bin.install "aws-cli-manager"
+  test: |
+    system "#{bin}/aws-cli-manager", "version"
 
 checksum:
   name_template: 'checksums.txt'
