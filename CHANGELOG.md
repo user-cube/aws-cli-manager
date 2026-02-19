@@ -1,3 +1,11 @@
+## [2.3.2](https://github.com/user-cube/aws-cli-manager/compare/v2.3.1...v2.3.2) (2026-02-19)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/jedib0t/go-pretty/v6 to v6.7.8 ([#24](https://github.com/user-cube/aws-cli-manager/issues/24)) ([c954f1a](https://github.com/user-cube/aws-cli-manager/commit/c954f1ac5f8d338a0e6f41f0ae23bdee5140f2ac))
+* **deps:** update module github.com/spf13/cobra to v1.10.2 ([#25](https://github.com/user-cube/aws-cli-manager/issues/25)) ([ae3612d](https://github.com/user-cube/aws-cli-manager/commit/ae3612dcfe964935d2ae75d8f5c3518c89c63a67))
+
 ## [2.3.1](https://github.com/user-cube/aws-cli-manager/compare/v2.3.0...v2.3.1) (2026-02-19)
 
 
