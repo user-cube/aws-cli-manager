@@ -1,3 +1,10 @@
+## [2.3.3](https://github.com/user-cube/aws-cli-manager/compare/v2.3.2...v2.3.3) (2026-02-24)
+
+
+### Bug Fixes
+
+* update actions ([#28](https://github.com/user-cube/aws-cli-manager/issues/28)) ([99b5145](https://github.com/user-cube/aws-cli-manager/commit/99b514598ec8beeaf21e10d658a78aad5e588afb))
+
 ## [2.3.2](https://github.com/user-cube/aws-cli-manager/compare/v2.3.1...v2.3.2) (2026-02-19)
 
 
